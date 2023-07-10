@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Post;
 use App\Models\User;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
 class PostController extends Controller
@@ -16,8 +18,10 @@ class PostController extends Controller
 
     public function index(User $user)
     {
+        $posts = Post::where('user_id', $user->id)->paginate(4);
         return view('dashboard', [
-            'user' => $user
+            'user' => $user,
+            'posts' => $posts
         ]);
     }
 
@@ -30,13 +34,31 @@ class PostController extends Controller
     {
         $this->validateInput($request);
 
-        dd($request);
         // Post::create([
-        //     'name' => $request->name,
-        //     'username' => Str::slug($request->username),
-        //     'email' => $request->email,
-        //     'password' => Hash::make($request->password)
+        //     'titulo' => $request->title,
+        //     'descripcion' => $request->description,
+        //     'imagen' => $request->imagen,
+        //     'user_id' => auth()->user()->id
         // ]);
+
+        // Otra forma de guardar
+        // $post = new post();
+        // $post->titulo = $request->title;
+        // $post->descripcion = $request->description;
+        // $post->imagen = $request->imagen;
+        // $post->user_id = auth()->user()->id;
+        // $post->save();
+
+        // Otra forma mas: usando relaciones Elocuent
+        $request->user()->posts()->create([
+            'titulo' => $request->title,
+            'descripcion' => $request->description,
+            'imagen' => $request->imagen,
+            'user_id' => auth()->user()->id
+        ]);
+
+
+        return redirect()->route('posts.index', auth()->user()->username);
     }
 
     public function validateInput(Request $request)

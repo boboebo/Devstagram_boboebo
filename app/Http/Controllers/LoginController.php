@@ -6,12 +6,12 @@ use Illuminate\Http\Request;
 
 class LoginController extends Controller
 {
-    public function index()
+    public function index()               //////////// metodo para mostrar la vista
     {
         return view('auth.login');
     }
 
-    public function store(Request $request)
+    public function store(Request $request)   /////// metodo para guardar
     {
         $this->validateInput($request);
 
@@ -24,7 +24,7 @@ class LoginController extends Controller
         ]);
     }
 
-    public function validateInput(Request $request)
+    public function validateInput(Request $request)   //////// validacion de datos q llegan al store
     {
         $this->validate($request, [
             'email' => 'Required|email',
